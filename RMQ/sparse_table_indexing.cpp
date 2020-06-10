@@ -40,9 +40,9 @@ void solve()
 	for (int j = 1; j < MAXLOG; j++)
 		for (int i = 0; i + (1 << j) <= n; i++)
 			if ((table[i][j - 1]).first < (table[i + (1 << (j - 1))][j - 1]).first)
-				table[i][j] = make_pair((table[i][j - 1]).first, i);
+				table[i][j] = table[i][j - 1];
 			else
-				table[i][j] = make_pair((table[i + (1 << (j - 1))][j - 1]).first, i + (1 << (j - 1)));
+				table[i][j] = table[i + (1 << (j - 1))][j - 1];
 
 	// Indexing starts from 0
 	// L is less than or equal to R
