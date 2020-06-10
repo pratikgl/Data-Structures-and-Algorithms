@@ -8,7 +8,7 @@ using namespace std;
 // RMQ using sparse table
 // Output would be the minimum value between two index
 
-// Time complexity
+// Time complexity for preprocessing and query
 // <O(n*log(n)), O(1)>
 
 
