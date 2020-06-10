@@ -39,10 +39,8 @@ void solve()
 	// Sparse table
 	for (int j = 1; j < MAXLOG; j++)
 		for (int i = 0; i + (1 << j) <= n; i++)
-			if ((table[i][j - 1]).first < (table[i + (1 << (j - 1))][j - 1]).first)
-				table[i][j] = table[i][j - 1];
-			else
-				table[i][j] = table[i + (1 << (j - 1))][j - 1];
+			table[i][j] = min(table[i][j - 1], table[i + (1 << (j - 1))][j - 1]);
+
 
 	// Indexing starts from 0
 	// L is less than or equal to R
@@ -51,10 +49,8 @@ void solve()
 	cin >> L >> R;
 	int j = logs[R - L + 1];
 	pair<int, int> minimum;
-	if ((table[L][j]).first < (table[R - (1 << j) + 1][j]).first)
-		minimum = table[L][j];
-	else
-		minimum = table[R - (1 << j) + 1][j];
+	minimum = min(table[L][j], table[R - (1 << j) + 1][j]);
+
 	cout << minimum.first << " " << minimum.second;
 }
 
