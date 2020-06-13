@@ -5,84 +5,61 @@ using namespace std;
 // Author: Pratik Goyal
 // goyal.9@iitj.ac.in
 
-// LCA and path using upward crawling
+// LCA and path using upward crawling (Tree)
 // Time complexity for preprocessing and query
 // <O(n), O(n)>
 
 const int N = 2e5 + 5;
 vector<int> adj[N];
-bool visited[N];
 int depth[N];
 int parent[N];
 
-void dfs(int v)
+void dfs(int v, int p, int d)
 {
-	visited[v] = true;
+	depth[v] = d;
+	parent[v] = p;
 	for (int u : adj[v])
-	{
-		if (!visited[u])
-		{
-			parent[u] = v;
-			depth[u] = depth[v] + 1;
-			dfs(u);
-		}
-	}
+		if (u != p)
+			dfs(u, v, d + 1);
 }
 
 vector<int> path_a;   //path from a to lca
 vector<int> path_b;   //path from b to lca
 vector<int> path_a2b; //path from a to b
-// Given that a is not equal to b
+int LCA;
 
 void find_path(int a, int b)
 {
 	path_a.push_back(a);
 	path_b.push_back(b);
-
-	if (depth[a] > depth[b])
-	{
-		while (depth[a] != depth[b])
-		{
-			a = parent[a];
-			if (a == b) break;
-			path_a.push_back(a);
-		}
-	}
-
-	else if (depth[a] < depth[b])
-	{
-		while (depth[a] != depth[b])
-		{
-			b = parent[b];
-			if (a == b) break;
-			path_b.push_back(b);
-		}
-
-	}
-
+	LCA = a;
 	while (a != b)
 	{
-		a = parent[a];
-		b = parent[b];
-		if (a == b)
+		if (depth[a] > depth[b])
 		{
+			a = parent[a];
+			LCA = a;
 			path_a.push_back(a);
-			break;
+		}
+		else if (depth[a] < depth[b])
+		{
+			b = parent[b];
+			LCA = b;
+			path_b.push_back(b);
 		}
 		else
 		{
+			a = parent[a];
+			b = parent[b];
+			LCA = a;
 			path_a.push_back(a);
 			path_b.push_back(b);
 		}
 	}
-	for (auto u = path_a.begin(); u != path_a.end(); u++)
-	{
-		path_a2b.push_back(*u);
-	}
-	for (auto u = path_b.rbegin(); u != path_b.rend(); u++)
-	{
-		path_a2b.push_back(*u);
-	}
+	reverse(path_b.begin(), path_b.end());
+	path_b.erase(path_b.begin());
+	path_a2b.insert(path_a2b.begin(), path_a.begin(), path_a.end());
+	path_a2b.insert(path_a2b.end(), path_b.begin(), path_b.end());
 }
 
 
@@ -98,13 +75,21 @@ void solve()
 		adj[v].push_back(u);
 	}
 
-	parent[1] = -1;
-	depth[1] = 0;
-	dfs(1);
-	find_path(2, 3); //find_path(a, b)
+	dfs(1, 0, 0);
+	find_path(5, 4); //find_path(a, b)
 
 	// print path_a2b
-	for (int u : path_a2b) cout << u << endl;
+	for (int u : path_a2b)
+		cout << u << endl;
+	// LCA is:
+	cout << LCA << endl;
+
+	// clear garbage values
+	for (int i = 0; i < n + 3; ++i)
+		adj[i].clear();
+	path_a.clear();
+	path_b.clear();
+	path_a2b.clear();
 }
 
 int main()
