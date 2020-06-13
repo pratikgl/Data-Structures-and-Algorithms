@@ -84,6 +84,13 @@ void solve()
 	preprocess();
 	int a, b; cin >> a >> b;
 	cout << query(a, b);
+
+	// clear garbage values
+	for (int i = 0; i < n + 3; ++i)
+		adj[i].clear();
+	euler.clear();
+	level.clear();
+	memset(first_visit, 0, sizeof(first_visit));
 }
 
 
