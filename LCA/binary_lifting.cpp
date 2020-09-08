@@ -13,6 +13,7 @@ using namespace std;
 const int N = 2e5 + 5;
 const int MAXLOG = 25;
 
+//log_value = ceil(log2(n));
 vector<int> adj[N];
 int timer, log_value;
 int tin[N], tout[N];
