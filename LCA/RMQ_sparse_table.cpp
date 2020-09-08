@@ -10,7 +10,9 @@ using namespace std;
 // <O(n*log(n)), O(1)>
 
 
-const int N = 2e5 + 5;
+// Double of the upper bound
+// otherwise Runtime error
+const int N = 5e5 + 5;
 const int MAXLOG = 25;
 
 vector<int> adj[N];

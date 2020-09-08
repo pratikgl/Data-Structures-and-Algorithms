@@ -1,11 +1,15 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-// Time complexity
-// < O(n*log(n)), O(1) >
-// RMQ sSegment tree
 
-const int N = 2e3 + 5;
+// Author: Pratik Goyal
+// goyal.9@iitj.ac.in
+
+// LCA using RMQ Segment tree
+// Time complexity
+// <O(n*log(n)), O(1)>
+
+const int N = 2e5 + 5;
 
 vector<int> adj[N];
 vector<int> euler;
@@ -34,11 +38,10 @@ void dfs(int v, int p)
 
 
 pair<int, int> t[6 * N];
-int nn;
 
 void build()
 {
-	nn = level.size();
+	int nn = level.size();
 	for (int i = 0; i < nn; i++)
 		t[i + nn] = make_pair(level[i], i);
 	for (int i = nn - 1; i > 0; --i)
@@ -47,7 +50,7 @@ void build()
 
 int query(int u, int v)
 {	// sum on interval [l, r)
-	nn = level.size();
+	int nn = level.size();
 	int L = first_visit[u];
 	int R = first_visit[v];
 	if (L > R) swap(L, R);
@@ -63,51 +66,30 @@ int query(int u, int v)
 	return (euler[res.second]);
 }
 
-
-
-void solve(int caseo)
+void solve()
 {
-	cout << "Case " << caseo << ":" << endl;
-	int n; cin >> n;
-	for (int i = 0; i < n; ++i)
+	int n; cin >> n;  // Number of nodes
+	for (int i = 0; i < n - 1; ++i)
 	{
-		int m; cin >> m;
-		for (int j = 0; j < m; ++j)
-		{
-			int lola; cin >> lola;
-			adj[i + 1].push_back(lola);
-			adj[lola].push_back(i + 1);
-		}
+		int u, v; cin >> u >> v;
+		adj[u].push_back(v);
+		adj[v].push_back(u);
 	}
-
-	dfs(1, 0);	//for (auto u : level) cout << u << " "; cout << endl;
-
-
+	dfs(1, 0);
 	build();
-	int qq; cin >> qq;
-	while (qq--)
-	{
-		int a, b; cin >> a >> b;
-		cout << query(a, b) << "\n";
-	}
-	for (int i = 0; i < n + 5; i++) adj[i].clear();
-	euler.clear();
-	level.clear();
-	memset(first_visit, 0, sizeof(first_visit));
 
+	cout << query(1, 2);
+
+	// clear garbage values
+	for (int i = 0; i < n + 3; ++i)
+		adj[i].clear();
 }
 
 
 int main()
 {
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
-	int n; cin >> n;
-	int i = 0;
-	while (n--)
-	{
-		i++;
-		solve(i);
-	}
+	//freopen("input.txt", "r", stdin);
+	//freopen("output.txt", "w", stdout);
+	solve();
 	return 0;
 }
