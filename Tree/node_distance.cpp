@@ -1,6 +1,7 @@
 /*
-https://cses.fi/problemset/task/1687/
+https://cses.fi/problemset/task/1135/
 */
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -95,16 +96,15 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 ///----------------------------- | FUNCTIONS | --------------------------------------///
 
-
 const int N = 2e5 + 5;
 const int MAXLOG = 25;
 
-vector<int> adj[N];
+vector<vi> adj(N);
 int timer, log_value;
 int tin[N], tout[N];
 int up[N][MAXLOG];
+int depth[N];
 
-//dfs(root, 0);
 void dfs(int v, int p)
 {
 	tin[v] = ++timer;
@@ -112,56 +112,61 @@ void dfs(int v, int p)
 	for (int i = 1; i <= log_value; ++i)
 		up[v][i] = up[up[v][i - 1]][i - 1];
 	for (int u : adj[v])
+	{
 		if (u != p)
+		{
+			depth[u] = depth[v] + 1;
 			dfs(u, v);
+		}
+	}
 
 	tout[v] = ++timer;
 }
 
 // u is ancestor of v
-int find_ancestor(int k, int x)
+bool is_ancestor(int u, int v)
 {
-	for (int i = MAXLOG; i >= 0; i--)
-	{
-		if (k >= (1 << i))
-		{
-			x = up[x][i];
-			k -= (1 << i);
-		}
-		if (k == 0) return x;
-	}
-	return 0;
+	return tin[u] <= tin[v] && tout[u] >= tout[v];
+}
+
+int lca(int u, int v)
+{
+	if (is_ancestor(u, v))
+		return u;
+	if (is_ancestor(v, u))
+		return v;
+	for (int i = log_value; i >= 0; --i)
+		if (!is_ancestor(up[u][i], v))
+			u = up[u][i];
+
+	return up[u][0];
+}
+
+int distance(int a, int x)
+{
+	return depth[a] - depth[x];
 }
 
 
-// left shift << multiply by 2
-// right shift >> divide by 2
-
 ///----------------------------- | START FROM HERE | --------------------------------------///
 
-
-
-#define int long long //change int main to int32_t main
-
-const  int mod = 1e9 + 7;
 
 void solve()
 {
 	int n, q; cin >> n >> q;
 	log_value = ceil(log2(n));
-	fr(i, 2, n + 1)
+	fr0(i, n - 1)
 	{
-		int x; cin >> x;
-		adj[i].pb(x);
-		adj[x].pb(i);
+		int u, v; cin >> u >> v;
+		adj[u].pb(v);
+		adj[v].pb(u);
 	}
-	dfs(1, 0);
+	dfs(1, 1);
 	while (q--)
 	{
-		int k, x; cin >> x >> k;
-		int ans = find_ancestor(k, x);
-		if (ans == 0) cout << -1 << sp;
-		else cout << ans << sp;
+		int a, b; cin >> a >> b;
+		int x = lca(a, b);
+		cout << distance(a, x) + distance(b, x) << nl;
 	}
 }
 
