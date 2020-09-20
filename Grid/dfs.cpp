@@ -102,8 +102,7 @@ int n, m;
 
 bool check(int i, int j)
 {
-	if (i >= 0 && i < n && j >= 0 && j < m) return true;
-	return false;
+	return i >= 0 && i < n && j >= 0 && j < m;
 }
 
 const int N = 2e3 + 5;
