@@ -1,17 +1,19 @@
 /*
-https://www.spoj.com/problems/SHPATH/
+https://cses.fi/problemset/task/1667/
+*/
+
+/*
+Shortest path for an unweighted graph
 */
 
 #include <bits/stdc++.h>
 using namespace std;
-
 /*
 #pragma GCC optimize("Ofast,03")
 #pragma comment(linker, "/stack:200000000")
 #pragma GCC target("avx,avx2,fma")
 #pragma GCC optimization ("unroll-loops")
 */
-
 #define    boost        ios::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL)
 #define    nl           "\n"
 #define    ll           long long
@@ -95,44 +97,35 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 ///----------------------------- | Debugging Ends | --------------------------------------///
 
-///----------------------------- | START FROM HERE | --------------------------------------///
 
-#define int long long //change int main to int32_t main
+const int N = 2e5 + 5;
 
-const int N = 1e4 + 5;
-const int INF = 1e9 + 5;
-vector<pii> adj[N];
+vector<int> adj[N];
+vector<bool> visited(N);
+vector<int> p(N, -1);
 
-void dijkstra(int s, vi &d, vi &p)
+void bfs(int s)
 {
-	d.assign(N, INF);
-	p.assign(N, -1);
-	vector<bool> u(N, false);
-
-	d[s] = 0;
-	//declare n globally and change N->n to control the loop
-	for (int i = 0; i < N; i++) {
-		int v = -1;
-		for (int j = 0; j < N; j++) {
-			if (!u[j] && (v == -1 || d[j] < d[v]))
-				v = j;
-		}
-
-		if (d[v] == INF)
-			break;
-
-		u[v] = true;
-		for (auto edge : adj[v]) {
-			int to = edge.first;
-			int len = edge.second;
-
-			if (d[v] + len < d[to]) {
-				d[to] = d[v] + len;
-				p[to] = v;
+	queue<int> q;
+	q.push(s);
+	visited[s] = true;
+	p[s] = -1;
+	while (!q.empty())
+	{
+		int v = q.front();
+		q.pop();
+		for (int u : adj[v])
+		{
+			if (!visited[u])
+			{
+				visited[u] = true;
+				p[u] = v;
+				q.push(u);
 			}
 		}
 	}
 }
+
 
 vector<int> restore_path(int s, int t, vi &p)
 {
@@ -152,28 +145,21 @@ vector<int> restore_path(int s, int t, vi &p)
 
 void solve()
 {
-	int n; cin >> n;
-	unordered_map<string, int> mp; //could be changed to unordered/map
-	fr(i, 1, n + 1) {
-		string s; cin >> s;
-		mp[s] = i;
-		int neigh; cin >> neigh;
-		while (neigh--) {
-			int nr, cost; cin >> nr >> cost;
-			adj[i].pb({nr, cost});
-			//adj[nr].pb({i, cost}); // directed graph
-		}
+	int n, m; cin >> n >> m;
+	fr0(i, m) {
+		int u, v; cin >> u >> v;
+		adj[u].pb(v); adj[v].pb(u);
 	}
-	int r; cin >> r;
-	while (r--) {
-		string s1, s2; cin >> s1 >> s2;
-		int x1 = mp[s1], x2 = mp[s2];
-		vi d, p;
-		dijkstra(min(x1, x2), d, p);
-		cout << d[max(x2, x1)] << nl;
+	bfs(1);
+	vi path = restore_path(1, n, p);
+	if (path[0] == -1) {
+		cout << "IMPOSSIBLE";
+		return;
 	}
-	mem(adj);
-
+	cout << path.size() << nl;
+	for (int u : path) {
+		cout << u << sp;
+	}
 }
 
 
@@ -184,7 +170,7 @@ int32_t main()
 	fio();
 	int t;
 	t = 1;
-	cin >> t;
+	//cin >> t;
 	while (t--) solve();
 	auto end = chrono::high_resolution_clock::now();
 	TIME(start, end);
