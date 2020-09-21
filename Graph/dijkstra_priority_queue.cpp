@@ -99,14 +99,16 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 #define int long long //change int main to int32_t main
 
-const int N = 1e4 + 5;
-const int INF = 1e9 + 5;
+const int N = 2e5 + 5;
+const int INF = 1e16 + 5;
 vector<pii> adj[N];
+vector<int> dist(N, INF);
+vector<int> parent(N, -1);
 
-void dijkstra(int s, vi &d, vi &p)
+void dijkstra(int s, vi &d = dist, vi &p = parent)
 {
-	d.assign(N, INF);
-	p.assign(N, -1);
+	dist.assign(N, INF);
+	parent.assign(N, -1);
 
 	d[s] = 0;
 
@@ -132,7 +134,7 @@ void dijkstra(int s, vi &d, vi &p)
 	}
 }
 
-vector<int> restore_path(int s, int t, vi &p)
+vector<int> restore_path(int s, int t, vi &p = parent)
 {
 	vector<int> path;
 	if (p[t] == -1) {
@@ -166,12 +168,12 @@ void solve()
 	while (r--) {
 		string s1, s2; cin >> s1 >> s2;
 		int x1 = mp[s1], x2 = mp[s2];
-		vi d, p;
-		dijkstra(min(x1, x2), d, p);
-		cout << d[max(x2, x1)] << nl;
-	}
-	mem(adj);
 
+		dijkstra(min(x1, x2));
+		cout << dist[max(x2, x1)] << nl;
+	}
+
+	mem(adj);
 }
 
 

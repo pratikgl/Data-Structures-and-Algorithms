@@ -102,9 +102,9 @@ const int N = 2e5 + 5;
 
 vector<int> adj[N];
 vector<bool> visited(N);
-vector<int> p(N, -1);
+vector<int> parent(N, -1);
 
-void bfs(int s)
+void bfs(int s, vi &p = parent)
 {
 	queue<int> q;
 	q.push(s);
@@ -127,7 +127,7 @@ void bfs(int s)
 }
 
 
-vector<int> restore_path(int s, int t, vi &p)
+vector<int> restore_path(int s, int t, vi &p = parent)
 {
 	vector<int> path;
 	if (p[t] == -1) {
@@ -151,7 +151,7 @@ void solve()
 		adj[u].pb(v); adj[v].pb(u);
 	}
 	bfs(1);
-	vi path = restore_path(1, n, p);
+	vi path = restore_path(1, n);
 	if (path[0] == -1) {
 		cout << "IMPOSSIBLE";
 		return;
