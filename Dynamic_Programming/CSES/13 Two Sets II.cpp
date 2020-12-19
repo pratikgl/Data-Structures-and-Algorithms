@@ -114,19 +114,25 @@ void dfs(int v)
 
 ///----------------------------- | START FROM HERE | --------------------------------------///
 
-const int N = 1e5 + 5;
+const int mod = (1e9 + 7) * 2; // modular inversion trick
+const int N = 5e5 + 5;
 int dp[N];
+
 
 void solve()
 {
-	int n, x; cin >> n >> x;
-	vi price(n); fr0(i, n) cin >> price[i];
-	vi pages(n); fr0(i, n) cin >> pages[i];
-	fr0(j, n) {
-		for (int i = x; i >= price[j]; i--)
-			dp[i] = max(dp[i], dp[i - price[j]] + pages[j]);
+	int n; cin >> n;
+	int sum = (n * (n + 1)) / 2;
+	if (sum % 2) {
+		cout << 0; return;
 	}
-	cout << dp[x];
+	sum /= 2; dp[0] = 1;
+	fr(i, 1, n + 1) {
+		for (int j = sum - i; j >= 0; j--) {
+			(dp[j + i] += dp[j]) %= mod;
+		}
+	}
+	cout << dp[sum] / 2 << nl;
 }
 
 int32_t main()

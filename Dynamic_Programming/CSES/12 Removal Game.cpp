@@ -114,19 +114,48 @@ void dfs(int v)
 
 ///----------------------------- | START FROM HERE | --------------------------------------///
 
-const int N = 1e5 + 5;
-int dp[N];
+// Atcoder educational dp : L-Deque
+
+// Method - 1
+const int mod = 1e9 + 7;
+const int N = 5e3 + 5;
+pii dp[N][N];
+
+pii rec(vi &v, int i, int j) {
+	if (i == j) return {v[i], 0};
+	pii score1 = dp[i + 1][j], score2 = dp[i][j - 1];
+	if (dp[i + 1][j].F == 0) {
+		score1 = dp[i + 1][j] = rec(v, i + 1, j);
+	}
+	if (dp[i][j - 1].F == 0) {
+		score2 = dp[i][j - 1] = rec(v, i, j - 1);
+	}
+	if (v[i] + score1.S > v[j] + score2.S) return {v[i] + score1.S, score1.F};
+	else return {v[j] + score2.S, score2.F};
+}
+
+/*
+// Method - 2
+const int mod = 1e9 + 7;
+const int N = 5e3 + 5;
+int dp[N][N];
+
+int rec(vi &v, int i, int j) {
+	if (dp[i][j] == 0) {
+		if (i > j) return 0;
+		if (i == j) return v[i];
+		dp[i][j] = max(v[i] + min(rec(v, i + 1, j - 1), rec(v, i + 2, j)), v[j] + min(rec(v, i + 1, j - 1), rec(v, i, j - 2)));
+	}
+	return dp[i][j];
+}
+*/
 
 void solve()
 {
-	int n, x; cin >> n >> x;
-	vi price(n); fr0(i, n) cin >> price[i];
-	vi pages(n); fr0(i, n) cin >> pages[i];
-	fr0(j, n) {
-		for (int i = x; i >= price[j]; i--)
-			dp[i] = max(dp[i], dp[i - price[j]] + pages[j]);
-	}
-	cout << dp[x];
+	int n; cin >> n;
+	vi x(n); fr0(i, n) cin >> x[i];
+	pii ans = rec(x, 0, n - 1);
+	cout << ans.F;
 }
 
 int32_t main()

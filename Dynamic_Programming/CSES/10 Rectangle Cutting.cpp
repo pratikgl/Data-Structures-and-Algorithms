@@ -114,19 +114,25 @@ void dfs(int v)
 
 ///----------------------------- | START FROM HERE | --------------------------------------///
 
-const int N = 1e5 + 5;
-int dp[N];
+const int mod = 1e9 + 7;
+const int N = 5e2 + 5;
+int dp[N][N];
 
 void solve()
 {
-	int n, x; cin >> n >> x;
-	vi price(n); fr0(i, n) cin >> price[i];
-	vi pages(n); fr0(i, n) cin >> pages[i];
-	fr0(j, n) {
-		for (int i = x; i >= price[j]; i--)
-			dp[i] = max(dp[i], dp[i - price[j]] + pages[j]);
+	int a, b; cin >> a >> b;
+	for (int i = 1; i <= 500; i++) {
+		for (int j = i + 1; j <= 500; j++) {
+			dp[i][j] = INT_MAX;
+			for (int x = 1; x <= i; x++) {
+				dp[i][j] = min(dp[i][j], 1 + dp[min(x, j)][max(x, j)] + dp[min(i - x, j)][max(i - x, j)]);
+			}
+			for (int x = 1; x <= j; x++) {
+				dp[i][j] = min(dp[i][j], 1 + dp[min(x, i)][max(x, i)] + dp[min(j - x, i)][max(j - x, i)]);
+			}
+		}
 	}
-	cout << dp[x];
+	cout << dp[min(a, b)][max(a, b)];
 }
 
 int32_t main()

@@ -114,19 +114,32 @@ void dfs(int v)
 
 ///----------------------------- | START FROM HERE | --------------------------------------///
 
-const int N = 1e5 + 5;
+const int mod = (1e9 + 7) * 2;
+const int N = 4e5 + 5;
 int dp[N];
 
 void solve()
 {
-	int n, x; cin >> n >> x;
-	vi price(n); fr0(i, n) cin >> price[i];
-	vi pages(n); fr0(i, n) cin >> pages[i];
-	fr0(j, n) {
-		for (int i = x; i >= price[j]; i--)
-			dp[i] = max(dp[i], dp[i - price[j]] + pages[j]);
+	int n; cin >> n;
+	vector<pair<pii, int>> v(n);
+	fr0(i, n) cin >> v[i].F.F >> v[i].F.S >> v[i].S;
+	map<int, int> mp;
+	fr0(i, n) mp[v[i].F.S], mp[v[i].F.F];
+	int i = 0;
+	for (auto it : mp) mp[it.F] = i++;
+	fr0(i, n) {
+		v[i].F.F = mp[v[i].F.F];
+		v[i].F.S = mp[v[i].F.S];
 	}
-	cout << dp[x];
+	sort(all(v));
+	int ans = 0, prev_max = 0, last = 0;
+	fr0(i, n) {
+		int x = v[i].F.F, y = v[i].F.S, p = v[i].S;
+		while (last < x) prev_max = max(prev_max, dp[last++]);
+		dp[y] = max(dp[y], p + prev_max);
+		ans = max(ans, dp[y]);;
+	}
+	cout << ans;
 }
 
 int32_t main()

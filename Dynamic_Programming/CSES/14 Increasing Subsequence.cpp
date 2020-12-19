@@ -114,20 +114,71 @@ void dfs(int v)
 
 ///----------------------------- | START FROM HERE | --------------------------------------///
 
-const int N = 1e5 + 5;
-int dp[N];
+// Method: 1 --> using segment tree
+
+const int mod = (1e9 + 7) * 2;
+const int N = 2e5 + 5;
+
+int t[2 * N];
+
+void modify(int p, int value)
+{	// set value at position p
+	for (t[p += N] = value; p > 1; p >>= 1)
+		t[p >> 1] = max(t[p], t[p ^ 1]);
+}
+
+int query(int l, int r)
+{	// sum on interval [l, r)
+	int res = 0; // initialize res as per the need
+	for (l += N, r += N; l < r; l >>= 1, r >>= 1)
+	{
+		if (l & 1) res = max(res,  t[l++]);
+		if (r & 1) res = max(res, t[--r]);
+	}
+	return res;
+}
+
 
 void solve()
 {
-	int n, x; cin >> n >> x;
-	vi price(n); fr0(i, n) cin >> price[i];
-	vi pages(n); fr0(i, n) cin >> pages[i];
-	fr0(j, n) {
-		for (int i = x; i >= price[j]; i--)
-			dp[i] = max(dp[i], dp[i - price[j]] + pages[j]);
+	int n; cin >> n;
+	vi a(n); fr0(i, n) cin >> a[i];
+
+	map<int, int> mp;
+	fr0(i, n) mp[a[i]];
+	int count = 0;
+	for (auto it : mp) mp[it.F] = count++;
+	fr0(i, n) a[i] = mp[a[i]];
+
+	for (int i = 0; i < n; ++i) {
+		int q = query(0, a[i]);
+		modify(a[i], max(q + 1, t[a[i] + N]));
 	}
-	cout << dp[x];
+	cout << *max_element(t, t + n);
 }
+
+/*
+// Method: 2 --> Binary Search
+
+void solve()
+{
+	int n; cin >> n;
+	vi a(n); fr0(i, n) cin >> a[i];
+	vi ans; ans.pb(a[0]);
+	fr(i, 1, n) {
+		auto it = upper_bound(all(ans), a[i]);
+		if (it == ans.begin()) ans[0] = a[i];
+		else {
+			auto it_prev = it - 1;
+			if (*it_prev != a[i]) {
+				if (it == ans.end()) ans.pb(a[i]);
+				else ans[it - ans.begin()] = a[i];
+			}
+		}
+	}
+	cout << ans.size();
+}
+*/
 
 int32_t main()
 {
